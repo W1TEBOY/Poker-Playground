@@ -416,7 +416,7 @@ namespace Poker.Core
         private int _NextActiveFrom( int start )
         {
             var n = Players.Count;
-            var seat = start + 1 % n;
+            var seat = (start + 1) % n;
             while ( !ActivePlayerIndices.Contains(seat) )
                 seat = (seat + 1) % n;
             return seat;
