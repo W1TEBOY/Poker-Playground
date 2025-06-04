@@ -1,0 +1,18 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "command": "dotnet build Poker.WebSockets/Poker.WebSockets.csproj",
+      "type": "shell",
+      "group": "build",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Format C#",
+      "type": "shell",
+      "command": "dotnet format --folder .",
+      "problemMatcher": []
+    }
+  ]
+}

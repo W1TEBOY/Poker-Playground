@@ -1,0 +1,36 @@
+// .devcontainer/devcontainer.json
+{
+  "name": "Poker C# Backend Dev",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": "..",
+    "target": "dev"
+  },
+  "workspaceFolder": "/src",
+  "workspaceMount": "source=${localWorkspaceFolder},target=${containerWorkspaceFolder},type=bind",
+  // "mounts": [
+  //   "source=${localEnv:USERPROFILE}\\.gitconfig,target=/home/vscode/.gitconfig,type=bind",
+  //   "source=${localEnv:USERPROFILE}\\.gitignore_global,target=/home/vscode/.gitignore_global,type=bind"
+  // ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "ms-dotnettools.csdevkit",
+        "SonarSource.sonarlint-vscode",
+        "josefpihrt-vscode.roslynator",
+        "waderyan.csharpfixformat"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "[csharp]": {
+          "editor.defaultFormatter": "ms-dotnettools.csharp"
+        }
+      }
+    }
+  },
+  "forwardPorts": [
+    5000
+  ],
+  "postCreateCommand": "dotnet build"
+}

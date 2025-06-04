@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Poker.WebSockets",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/Poker.WebSockets/bin/Debug/net9.0/Poker.WebSockets.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/Poker.WebSockets",
+      "console": "integratedTerminal"
+    }
+  ]
+}
