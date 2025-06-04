@@ -70,5 +70,27 @@ namespace Poker.Core.Tests
             Assert.Equal(totalBefore, totalAfter);
         }
 
+        [Fact]
+        public void NextHand_BlindPositionsWrapAround( )
+        {
+            var engine = new PokerEngine();
+            engine.SmallBlind = 1;
+            engine.BigBlind = 2;
+
+            var p1 = new Player("P1", startChips: 100, playerCount: 3, currentPosition: 0, new RandomAgent());
+            var p2 = new Player("P2", startChips: 100, playerCount: 3, currentPosition: 1, new RandomAgent());
+            var p3 = new Player("P3", startChips: 100, playerCount: 3, currentPosition: 2, new RandomAgent());
+
+            engine.Players = new List<Player> { p1, p2, p3 };
+
+            engine.SmallBlindPosition = 1;
+            engine.BigBlindPosition = 2;
+
+            engine.NextHand();
+
+            Assert.Equal(2, engine.SmallBlindPosition);
+            Assert.Equal(0, engine.BigBlindPosition);
+        }
+
     }
 }
