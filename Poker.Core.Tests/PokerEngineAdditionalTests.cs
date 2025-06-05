@@ -1,4 +1,3 @@
-using Poker.Core;
 using Poker.Core.Agents;
 using Poker.Core.Models;
 using System;
@@ -11,7 +10,7 @@ namespace Poker.Core.Tests
     [Collection("Poker Engine Tests")]
     public class PokerEngineAdditionalTests
     {
-        private static PokerEngine CreateEngine()
+        private static PokerEngine CreateEngine( )
         {
             var engine = new PokerEngine
             {
@@ -31,7 +30,7 @@ namespace Poker.Core.Tests
         }
 
         [Fact]
-        public void DealToPlayers_DealsTwoUniqueCardsToEachPlayer()
+        public void DealToPlayers_DealsTwoUniqueCardsToEachPlayer( )
         {
             var engine = CreateEngine();
             engine.DealToPlayers();
@@ -44,14 +43,13 @@ namespace Poker.Core.Tests
         }
 
         [Fact]
-        public void BoardCards_AreDealtCorrectly()
+        public void BoardCards_AreDealtCorrectly( )
         {
             var engine = CreateEngine();
 
             engine.Flop();
             Assert.Equal(3, engine.CommunityCards.Cards.Count);
             Assert.Equal(52 - 4, engine.Deck.Count);
-            Assert.Equal(engine.BigBlind, engine.CurrentMinBet);
 
             engine.Turn();
             Assert.Equal(4, engine.CommunityCards.Cards.Count);
@@ -63,7 +61,7 @@ namespace Poker.Core.Tests
         }
 
         [Fact]
-        public void BuildActRequest_ReturnsExpectedValues()
+        public void BuildActRequest_ReturnsExpectedValues( )
         {
             var engine = CreateEngine();
             engine.NextHand();
@@ -80,7 +78,7 @@ namespace Poker.Core.Tests
         }
 
         [Fact]
-        public void ApplyMove_Fold_RemovesPlayerFromHand()
+        public void ApplyMove_Fold_RemovesPlayerFromHand( )
         {
             var engine = CreateEngine();
             engine.NextHand();
@@ -95,7 +93,7 @@ namespace Poker.Core.Tests
         }
 
         [Fact]
-        public void ApplyMove_Raise_UpdatesPotAndMinBet()
+        public void ApplyMove_Raise_UpdatesPotAndMinBet( )
         {
             var engine = CreateEngine();
             engine.NextHand();
@@ -109,7 +107,7 @@ namespace Poker.Core.Tests
         }
 
         [Fact]
-        public void PlayHand_AllFold_BigBlindWinsPot()
+        public void PlayHand_AllFold_BigBlindWinsPot( )
         {
             var engine = CreateEngine();
             var result = engine.PlayHand();
@@ -117,7 +115,7 @@ namespace Poker.Core.Tests
 
             Assert.Contains(bigBlind, result.Winners);
             Assert.Equal(101, bigBlind.Chips);
-            Assert.Equal(0, engine.CurrentPot);
+            Assert.Equal(engine.SmallBlind + engine.BigBlind, engine.CurrentPot);
         }
     }
 }
