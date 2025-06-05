@@ -19,9 +19,9 @@ namespace Poker.Core.Tests
                 BigBlind = 2,
                 Players = new List<Player>
                 {
-                    new Player("P1", 100, 3, 0, new FoldAgent()),
-                    new Player("P2", 100, 3, 1, new FoldAgent()),
-                    new Player("P3", 100, 3, 2, new FoldAgent())
+                    new Player("P1", 100, 3, 0, new CheckOrFoldAgent()),
+                    new Player("P2", 100, 3, 1, new CheckOrFoldAgent()),
+                    new Player("P3", 100, 3, 2, new CheckOrFoldAgent())
                 },
                 SmallBlindPosition = 0,
                 BigBlindPosition = 1,
