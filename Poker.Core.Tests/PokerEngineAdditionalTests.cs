@@ -1,4 +1,5 @@
 using Poker.Core.Agents;
+using Poker.Core.Interfaces;
 using Poker.Core.Models;
 using System;
 using System.Collections.Generic;
@@ -116,6 +117,47 @@ namespace Poker.Core.Tests
             Assert.Contains(bigBlind, result.Winners);
             Assert.Equal(101, bigBlind.Chips);
             Assert.Equal(engine.SmallBlind + engine.BigBlind, engine.CurrentPot);
+        }
+
+        private class CallThenFoldAgent : IPlayerStrategy
+        {
+            public PlayerAction Act( ActRequest state )
+            {
+                if ( state.CurrentStreet == Street.Preflop )
+                {
+                    if ( state.ToCall == 0 )
+                        return new PlayerAction(PlayType.Check);
+                    return new PlayerAction(PlayType.Call, state.ToCall);
+                }
+                return new PlayerAction(PlayType.Fold);
+            }
+        }
+
+        [Fact]
+        public void PlayHand_ChipsConserved_WhenPlayerFoldsAfterBetting( )
+        {
+            var engine = new PokerEngine
+            {
+                SmallBlind = 5,
+                BigBlind = 10,
+                Players = new List<Player>
+                {
+                    new Player("P1", 100, 2, 0, new CheckOrCallAgent()),
+                    new Player("P2", 100, 2, 1, new CallThenFoldAgent())
+                },
+                SmallBlindPosition = 0,
+                BigBlindPosition = 1,
+                Deck = new Deck(new Random(42))
+            };
+
+            int totalBefore = engine.Players.Sum(p => p.Chips);
+
+            var result = engine.PlayHand();
+
+            int totalAfter = engine.Players.Sum(p => p.Chips);
+
+            Assert.NotNull(result);
+            Assert.Equal(totalBefore, totalAfter);
         }
     }
 }
