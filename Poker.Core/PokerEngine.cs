@@ -1,6 +1,5 @@
 namespace Poker.Core
 {
-    using Poker.Core.Agents;
     using Poker.Core.Evaluation;
     using Poker.Core.Interfaces;
     using Poker.Core.Models;
@@ -82,7 +81,7 @@ namespace Poker.Core
             Players = Enumerable.Range(0, MaxPlayers)
                 .Select(i =>
                 {
-                    var strat = new CheckOrFoldAgent(); // allStrats[rng.Next(allStrats.Length)];
+                    var strat = allStrats[rng.Next(allStrats.Length)];
                     return new Player(
                         name: $"Player {i + 1}",
                         startChips: StartChips,
