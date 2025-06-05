@@ -140,14 +140,13 @@ namespace Poker.Core
             _betsThisStreet = Players.ToDictionary(p => p.Id, p => 0);
 
             var sbPlayer = Players[SmallBlindPosition];
-            _betsThisStreet[sbPlayer.Id] = sbPlayer.Bet(SmallBlind); // Chips deducted here
+            _betsThisStreet[sbPlayer.Id] = sbPlayer.Bet(SmallBlind);
 
             var bbPlayer = Players[BigBlindPosition];
-            _betsThisStreet[bbPlayer.Id] = bbPlayer.Bet(BigBlind); // Chips deducted here
+            _betsThisStreet[bbPlayer.Id] = bbPlayer.Bet(BigBlind);
 
             DealToPlayers();
 
-            
             // return losers and next actor
             return (losers, CurrentPlayerTurn);
         }
@@ -317,6 +316,7 @@ namespace Poker.Core
 
             // remove from the “in-hand” list
             ActivePlayerIndices.RemoveAll(i => Players[i].Id == playerId);
+
         }
 
 
@@ -350,7 +350,7 @@ namespace Poker.Core
             int toCall = CurrentMinBet - _betsThisStreet[playerId];
             if ( toCall <= 0 )
             {
-                _Check(); // Player doesn't owe anything or owes less than 0 (should not happen if CurrentMinBet is well-managed)
+                _Check();
                 return;
             }
 
@@ -362,7 +362,6 @@ namespace Poker.Core
                 Console.WriteLine($"{Players[seat].Name} is All In (even though they tried to call like a dumbass)!.");
                 return;
             }
-
             _betsThisStreet[playerId] += Players[seat].Bet(toCall);
             _AdvanceTurn();
         }
@@ -486,40 +485,49 @@ namespace Poker.Core
 
         private bool RunBettingRound( Street street, bool skipRound = false )
         {
-            if (skipRound)
+            if ( skipRound )
             {
-              return true;
+                return true;
             }
-          
-            _round = street; // Set current street first
 
-            // Deal cards for new street *before* setting up betting state for that street
-            if (street == Street.Flop) { Flop(); } // Flop() now only deals cards
-            else if (street == Street.Turn) { Turn(); } // Turn() now only deals cards
-            else if (street == Street.River) { River(); } // River() now only deals cards
+            _round = street;
 
-            if (street != Street.Preflop)
+            if ( street == Street.Flop )
+            {
+                Flop();
+            }
+            else if ( street == Street.Turn )
+            {
+                Turn();
+            }
+            else if ( street == Street.River )
+            { River(); }
+
+            if ( street != Street.Preflop )
             {
                 _anyBetThisStreet = false;
-                _lastRaiseAmount = 0; // No prior raise amount for this new street.
-                CurrentMinBet = 0;    // No bets yet on this new street.
+                _lastRaiseAmount = 0;
+                CurrentMinBet = 0;
 
-                foreach (var pid_key in _betsThisStreet.Keys.ToList())
+                foreach ( var pid_key in _betsThisStreet.Keys.ToList() )
                 {
-                     _betsThisStreet[pid_key] = 0;
+                    _betsThisStreet[pid_key] = 0;
                 }
 
-
-                if (ActivePlayerIndices.Any()) {
+                if ( ActivePlayerIndices.Any() )
+                {
                     CurrentPlayerTurn = SmallBlindPosition; // Start with SB post-flop
 
                     int initialTurnCheck = CurrentPlayerTurn;
-                    bool foundNextPlayer = ActivePlayerIndices.Contains(CurrentPlayerTurn); // Check if SB itself is active
+                    bool foundNextPlayer = ActivePlayerIndices.Contains(CurrentPlayerTurn);
 
-                    if (!foundNextPlayer) { // If SB not active, find next
+                    if ( !foundNextPlayer )
+                    { // If SB not active, find next
                         CurrentPlayerTurn = (CurrentPlayerTurn + 1) % Players.Count;
-                        while (CurrentPlayerTurn != initialTurnCheck) {
-                            if (ActivePlayerIndices.Contains(CurrentPlayerTurn)) {
+                        while ( CurrentPlayerTurn != initialTurnCheck )
+                        {
+                            if ( ActivePlayerIndices.Contains(CurrentPlayerTurn) )
+                            {
                                 foundNextPlayer = true;
                                 break;
                             }
@@ -527,19 +535,22 @@ namespace Poker.Core
                         }
                     }
 
-                    if (foundNextPlayer) {
-                         CurrentPlayerId = Players[CurrentPlayerTurn].Id;
-                         Console.WriteLine($"DEBUG: {street} starting. Player turn set to {Players[CurrentPlayerTurn].Name} (seat {CurrentPlayerTurn}, chips {Players[CurrentPlayerTurn].Chips}). Bets reset.");
-                    } else {
-                        Console.WriteLine($"DEBUG: {street} starting. No active player found to start turn. ActiveIndices: {ActivePlayerIndices.Count}");
+                    if ( !foundNextPlayer )
+                    {
                         skipRound = true;
                     }
-                } else {
-                     Console.WriteLine($"DEBUG: {street} starting. No active players. ActiveIndices: {ActivePlayerIndices.Count}");
-                     skipRound = true;
+                }
+                else
+                {
+                    skipRound = true;
                 }
             }
             else // Street.Preflop
+            {
+                _anyBetThisStreet = true;
+            }
+
+            if ( skipRound )
             {
                 return true;
             }
@@ -592,12 +603,10 @@ namespace Poker.Core
                     }
                 }
 
-
                 Player actingPlayer = Players[CurrentPlayerTurn];
                 Guid actingPlayerId = actingPlayer.Id;
 
-                var req = new ActRequest;
-
+                var req = new ActRequest
                 {
                     HoleCards = actingPlayer.Hand.Cards,
                     CommunityCards = CommunityCards.Cards,
@@ -614,17 +623,21 @@ namespace Poker.Core
                     SmallBlind = SmallBlind,
                     BigBlind = BigBlind
                 };
-                
-                var move = actingPlayer.Act(req); // Use actingPlayer
 
-                ApplyMove(actingPlayerId, move.Play, move.Amount ?? 0); // ApplyMove using actingPlayerId
+                var move = actingPlayer.Act(req);
+
+                Console.WriteLine($"{actingPlayer.Name} decided to {move.Play}!");
+
+                ApplyMove(actingPlayerId, move.Play, move.Amount ?? 0);
                 actionsThisSubRound++;
 
-                if (move.Play == PlayType.Raise) {
+                if ( move.Play == PlayType.Raise )
+                {
                     actionsThisSubRound = 1;
                 }
 
-                if (_round != street) {
+                if ( _round != street )
+                {
                     break;
                 }
             }

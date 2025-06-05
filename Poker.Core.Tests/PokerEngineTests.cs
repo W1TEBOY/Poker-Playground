@@ -1,5 +1,4 @@
 ﻿using Poker.Core.Agents;
-using Poker.Core.Interfaces;
 using Poker.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,28 +10,6 @@ namespace Poker.Core.Tests
     [Collection("Poker Engine Tests")]
     public class PokerEngineTests
     {
-        public class CheckOnlyStrategy : IPlayerStrategy
-        {
-            public string Name => "CheckOnly";
-            public PlayerAction Act(ActRequest request)
-            {
-                if (request.ToCall == 0)
-                {
-                    return new PlayerAction(PlayType.Check);
-                }
-                // If forced to call, then call.
-                return new PlayerAction(PlayType.Call, request.ToCall);
-            }
-        }
-
-        public class FoldStrategy : IPlayerStrategy
-        {
-            public string Name => "FoldOnly";
-            public PlayerAction Act(ActRequest request)
-            {
-                return new PlayerAction(PlayType.Fold);
-            }
-        }
 
         [Fact]
         public void NextHand_WithPlayersWithoutChips_GetCut( )
@@ -141,17 +118,12 @@ namespace Poker.Core.Tests
             engine.BigBlindPosition = 1;   // Player 2
             // CurrentPlayerTurn should be after BB, so Player 3 (index 2)
             engine.CurrentPlayerTurn = 2;
-            if (engine.Players.Count > engine.CurrentPlayerTurn)
-            {
-                 engine.CurrentPlayerId = engine.Players[engine.CurrentPlayerTurn].Id;
-            }
 
             // Call NextHand() to properly initialize the hand state (e.g., post blinds, deal cards)
             // This is crucial because PlayHand() assumes a hand is already in progress.
             engine.NextHand();
 
             HandResult handResult = null;
-
             var exception = Record.Exception(( ) => handResult = engine.PlayHand());
 
             // Assert
@@ -182,8 +154,9 @@ namespace Poker.Core.Tests
             engine.SmallBlindPosition = 0; // P1
             engine.BigBlindPosition = 1;   // P2
             engine.CurrentPlayerTurn = 2;   // P3 UTG's turn initially
-            engine.CurrentPlayerId = p3.Id; // This is who the test THINKS is UTG initially based on p1=SB, p2=BB.
-
+                                            // This is who the test THINKS is UTG initially based on p1=SB, p2=BB.
+                                            // However, NextHand() will determine the actual SB, BB, and UTG for the hand it sets up.
+                                            // The engine.SmallBlindPosition etc. are inputs to NextHand for where the blinds were *last hand*.
 
             // Let p1, p2, p3 be players at conceptual seats 0, 1, 2.
             // If engine.SmallBlindPosition is 0 (p1 was last SB), NextHand() will make:
