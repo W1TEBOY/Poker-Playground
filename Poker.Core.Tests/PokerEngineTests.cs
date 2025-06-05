@@ -116,7 +116,7 @@ namespace Poker.Core.Tests
         }
 
         [Fact]
-        public void PlayHand_AllPlayersCheck_CompletesSuccessfully()
+        public void PlayHand_AllPlayersCheck_CompletesSuccessfully( )
         {
             // Arrange
             var engine = new PokerEngine();
@@ -125,9 +125,9 @@ namespace Poker.Core.Tests
             int startChips = 100;
             int playerCount = 3;
 
-            var checkOnlyStrategy = new CheckOnlyStrategy();
+            var checkOnlyStrategy = new CheckOrCallAgent();
             var players = new List<Player>();
-            for (int i = 0; i < playerCount; i++)
+            for ( int i = 0; i < playerCount; i++ )
             {
                 players.Add(new Player($"Player {i + 1}", startChips, playerCount, i, checkOnlyStrategy));
             }
@@ -151,7 +151,8 @@ namespace Poker.Core.Tests
             engine.NextHand();
 
             HandResult handResult = null;
-            var exception = Record.Exception(() => handResult = engine.PlayHand());
+
+            var exception = Record.Exception(( ) => handResult = engine.PlayHand());
 
             // Assert
             Assert.Null(exception); // Ensure PlayHand completes without throwing an exception
@@ -160,7 +161,7 @@ namespace Poker.Core.Tests
         }
 
         [Fact]
-        public void PlayHand_BlindsFold_ChipsAreCollectedAndAwarded()
+        public void PlayHand_BlindsFold_ChipsAreCollectedAndAwarded( )
         {
             // Arrange
             var engine = new PokerEngine();
@@ -169,7 +170,7 @@ namespace Poker.Core.Tests
             int startChips = 100;
             int playerCount = 3;
 
-            var foldStrategy = new FoldStrategy();
+            var foldStrategy = new FoldAgent();
             // CheckOnlyStrategy is already defined in this file from a previous task.
 
             var p1 = new Player("P1_SB", startChips, playerCount, 0, foldStrategy); // SB
@@ -182,8 +183,7 @@ namespace Poker.Core.Tests
             engine.BigBlindPosition = 1;   // P2
             engine.CurrentPlayerTurn = 2;   // P3 UTG's turn initially
             engine.CurrentPlayerId = p3.Id; // This is who the test THINKS is UTG initially based on p1=SB, p2=BB.
-                                        // However, NextHand() will determine the actual SB, BB, and UTG for the hand it sets up.
-                                        // The engine.SmallBlindPosition etc. are inputs to NextHand for where the blinds were *last hand*.
+
 
             // Let p1, p2, p3 be players at conceptual seats 0, 1, 2.
             // If engine.SmallBlindPosition is 0 (p1 was last SB), NextHand() will make:
@@ -218,7 +218,7 @@ namespace Poker.Core.Tests
             Assert.NotEmpty(handResult.Winners);
             Assert.Single(handResult.Winners); // Should be only one winner
 
-            var winner = handResult.Winners.First();
+            var winner = handResult.Winners[0];
             Assert.Equal(p3.Id, winner.Id); // P3 (new BB) should be the winner.
 
             // Final chip counts reflect the outcome of the hand.

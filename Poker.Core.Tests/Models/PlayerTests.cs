@@ -16,7 +16,7 @@ namespace Poker.Core.Tests.Models
     [Collection("Player Tests")]
     public class PlayerTests
     {
-        private readonly IPlayerStrategy _strategy = new FoldAgent();
+        private readonly IPlayerStrategy _strategy = new CheckOrFoldAgent();
         private readonly string _name = "Test Player";
         private readonly int _startChips = 1000;
         private readonly Guid _id = Guid.NewGuid();
