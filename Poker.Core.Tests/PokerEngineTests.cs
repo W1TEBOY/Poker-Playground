@@ -174,9 +174,9 @@ namespace Poker.Core.Tests
         }
 
         [Fact]
-        public void TenEngines_FiftyHandsEach_MaintainsTotalChips( )
+        public void FiftyEngines_FiftyHandsEach_MaintainsTotalChips( )
         {
-            const int engineCount = 10;
+            const int engineCount = 50;
             const int handsPerEngine = 50;
 
             Parallel.For(0, engineCount, _ =>

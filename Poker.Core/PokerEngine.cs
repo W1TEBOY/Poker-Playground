@@ -228,23 +228,8 @@ namespace Poker.Core
             while ( _round != Street.Showdown || (!_anyBetThisStreet && checks >= ActivePlayerIndices.Count) )
             {
                 var player = Players[CurrentPlayerTurn];
-                var req = new ActRequest
-                {
-                    HoleCards = player.Hand.Cards,
-                    CommunityCards = CommunityCards.Cards,
-                    CurrentStreet = _round,
-                    ToCall = CurrentMinBet - _betsThisStreet[player.Id],
-                    MinRaise = _lastRaiseAmount + CurrentMinBet - _betsThisStreet[player.Id],
-                    AnyBetThisStreet = _anyBetThisStreet,
-                    PotSize = CurrentPot,
-                    YourCurrentBet = _betsThisStreet[player.Id],
-                    YourStack = player.Chips,
-                    NumActivePlayers = ActivePlayerIndices.Count,
-                    YourSeatIndex = CurrentPlayerTurn,
-                    DealerIndex = BigBlindPosition - 1 < 0 ? Players.Count - 1 : BigBlindPosition - 1,
-                    SmallBlind = SmallBlind,
-                    BigBlind = BigBlind
-                };
+
+                var req = BuildActRequest(player);
 
                 var action = player.Act(req);
                 ApplyMove(player.Id, action.Play, action.Amount ?? 0);
@@ -620,23 +605,7 @@ namespace Poker.Core
                 Player actingPlayer = Players[CurrentPlayerTurn];
                 Guid actingPlayerId = actingPlayer.Id;
 
-                var req = new ActRequest
-                {
-                    HoleCards = actingPlayer.Hand.Cards,
-                    CommunityCards = CommunityCards.Cards,
-                    CurrentStreet = _round,
-                    ToCall = CurrentMinBet - _betsThisStreet[actingPlayerId],
-                    MinRaise = _lastRaiseAmount + CurrentMinBet - _betsThisStreet[actingPlayerId],
-                    AnyBetThisStreet = _anyBetThisStreet,
-                    PotSize = CurrentPot,
-                    YourCurrentBet = _betsThisStreet[actingPlayerId],
-                    YourStack = actingPlayer.Chips,
-                    NumActivePlayers = ActivePlayerIndices.Count,
-                    YourSeatIndex = CurrentPlayerTurn,
-                    DealerIndex = BigBlindPosition - 1 < 0 ? Players.Count - 1 : BigBlindPosition - 1,
-                    SmallBlind = SmallBlind,
-                    BigBlind = BigBlind
-                };
+                var req = BuildActRequest(actingPlayer);
 
                 var move = actingPlayer.Act(req);
 
