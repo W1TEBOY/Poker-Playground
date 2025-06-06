@@ -1,6 +1,5 @@
 namespace Poker.Core
 {
-    using Poker.Core.Agents;
     using Poker.Core.Evaluation;
     using Poker.Core.Interfaces;
     using Poker.Core.Models;
@@ -41,8 +40,8 @@ namespace Poker.Core
         {
             get
             {
-                // If _betsThisStreet is not yet initialized, treat as zero.
-                return _betsThisStreet?.Values.Sum() ?? 0;
+                // Sum of all chips committed by players this hand.
+                return _betsThisHand?.Values.Sum() ?? 0;
             }
         }
         public int MaxPlayers { get; } = 6;
@@ -60,6 +59,7 @@ namespace Poker.Core
 
         private bool _anyBetThisStreet;
         private Dictionary<Guid, int> _betsThisStreet;
+        private Dictionary<Guid, int> _betsThisHand;
 
         private Street _round = Street.Preflop;
         private int _lastRaiseAmount;
@@ -81,7 +81,7 @@ namespace Poker.Core
             Players = Enumerable.Range(0, MaxPlayers)
                 .Select(i =>
                 {
-                    var strat = new CheckOrFoldAgent(); // allStrats[rng.Next(allStrats.Length)];
+                    var strat = allStrats[rng.Next(allStrats.Length)];
                     return new Player(
                         name: $"Player {i + 1}",
                         startChips: StartChips,
@@ -138,12 +138,17 @@ namespace Poker.Core
             // initialize betting
             _anyBetThisStreet = false;
             _betsThisStreet = Players.ToDictionary(p => p.Id, p => 0);
+            _betsThisHand = Players.ToDictionary(p => p.Id, p => 0);
 
             var sbPlayer = Players[SmallBlindPosition];
-            _betsThisStreet[sbPlayer.Id] = sbPlayer.Bet(SmallBlind);
+            var sbBet = sbPlayer.Bet(SmallBlind);
+            _betsThisStreet[sbPlayer.Id] = sbBet;
+            _betsThisHand[sbPlayer.Id] += sbBet;
 
             var bbPlayer = Players[BigBlindPosition];
-            _betsThisStreet[bbPlayer.Id] = bbPlayer.Bet(BigBlind);
+            var bbBet = bbPlayer.Bet(BigBlind);
+            _betsThisStreet[bbPlayer.Id] = bbBet;
+            _betsThisHand[bbPlayer.Id] += bbBet;
 
             DealToPlayers();
 
@@ -194,12 +199,14 @@ namespace Poker.Core
             CommunityCards.Add(Deck.Draw());
             CommunityCards.Add(Deck.Draw());
             CommunityCards.Add(Deck.Draw());
+            Console.WriteLine($"At the Flop, we have: {CommunityCards}");
         }
 
         public void Turn( )
         {
             Deck.Draw();
             CommunityCards.Add(Deck.Draw());
+            Console.WriteLine($"At the Turn, we have: {CommunityCards}");
         }
 
         [SuppressMessage("CodeQuality", "S4144:Methods should not have identical implementations",
@@ -208,6 +215,7 @@ namespace Poker.Core
         {
             Deck.Draw();
             CommunityCards.Add(Deck.Draw());
+            Console.WriteLine($"At the River, we have: {CommunityCards}");
         }
 
         /// <summary>
@@ -362,7 +370,9 @@ namespace Poker.Core
                 Console.WriteLine($"{Players[seat].Name} is All In (even though they tried to call like a dumbass)!.");
                 return;
             }
-            _betsThisStreet[playerId] += Players[seat].Bet(toCall);
+            var bet = Players[seat].Bet(toCall);
+            _betsThisStreet[playerId] += bet;
+            _betsThisHand[playerId] += bet;
             _AdvanceTurn();
         }
 
@@ -381,7 +391,9 @@ namespace Poker.Core
             }
 
             int contribution = amount - already;              // new chips put in pot
-            _betsThisStreet[playerId] += player.Bet(contribution);
+            var bet = player.Bet(contribution);
+            _betsThisStreet[playerId] += bet;
+            _betsThisHand[playerId] += bet;
 
             _anyBetThisStreet = true;
 
@@ -396,7 +408,9 @@ namespace Poker.Core
             int seat = Players.FindIndex(p => p.Id == playerId);
             int contribution = Players[seat].Chips;
             int total = _betsThisStreet[playerId] + contribution;
-            _betsThisStreet[playerId] += Players[seat].Bet(contribution);
+            var bet = Players[seat].Bet(contribution);
+            _betsThisStreet[playerId] += bet;
+            _betsThisHand[playerId] += bet;
             _anyBetThisStreet = true;
             if ( total > CurrentMinBet )
             {
@@ -661,8 +675,12 @@ namespace Poker.Core
             List<(Player Player, HandValue HandValue)> showdownHands )
         {
             // 1) Build a working list of (player, contributed amount)
-            var contributions = showdownHands
-                .Select(sh => (Player: sh.Player, Bet: _betsThisStreet[sh.Player.Id]))
+            var contributions = Players
+                .Select(p => (
+                    Player: p,
+                    Bet: _betsThisHand.ContainsKey(p.Id) ? _betsThisHand[p.Id] : 0,
+                    Eligible: showdownHands.Any(sh => sh.Player.Id == p.Id)))
+                .Where(x => x.Bet > 0)
                 .OrderBy(x => x.Bet)
                 .ToList();
 
@@ -678,11 +696,11 @@ namespace Poker.Core
                 {
                     // everyone whose total bet ≥ this level participates
                     var eligible = contributions
-                        .Where(x => x.Bet >= levelBet)
+                        .Where(x => x.Bet >= levelBet && x.Eligible)
                         .Select(x => x.Player)
                         .ToList();
 
-                    int potAmount = levelSize * eligible.Count;
+                    int potAmount = levelSize * contributions.Count(x => x.Bet >= levelBet);
                     sidePots.Add((potAmount, eligible));
                     prevLevel = levelBet;
                 }
@@ -714,7 +732,10 @@ namespace Poker.Core
 
             // 4) reset pot & per‐hand bets
             foreach ( var pid in _betsThisStreet.Keys.ToList() )
+            {
                 _betsThisStreet[pid] = 0;
+                _betsThisHand[pid] = 0;
+            }
         }
 
     }

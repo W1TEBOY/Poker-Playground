@@ -1,5 +1,6 @@
 ﻿using Poker.Core;
 using Poker.Core.Models;
+using System.Diagnostics;
 
 namespace Poker.ConsoleApp
 {
@@ -13,6 +14,9 @@ namespace Poker.ConsoleApp
 
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             Console.WriteLine("🎲  Poker simulation starting…\n");
+
+            // Start the stopwatch before playing any hands
+            var stopwatch = Stopwatch.StartNew();
 
             while ( engine.Players.Count > 1 && handNum < MAX_HANDS )
             {
@@ -47,8 +51,28 @@ namespace Poker.ConsoleApp
                 Console.WriteLine();
             }
 
+            // Stop the timer
+            stopwatch.Stop();
+
             Console.WriteLine("⏹  Game over!\nFinal standings:");
             PrintStacks(engine);
+            Console.WriteLine();
+
+            // Calculate total and average times
+            TimeSpan totalTime = stopwatch.Elapsed;
+            double averageMsPerHand = handNum > 0
+                ? totalTime.TotalMilliseconds / handNum
+                : 0.0;
+
+            // Pretty‐print the total time as hh:mm:ss.fff
+            string prettyTotal = string.Format("{0:D2}:{1:D2}:{2:D2}.{3:D3}",
+                totalTime.Hours,
+                totalTime.Minutes,
+                totalTime.Seconds,
+                totalTime.Milliseconds);
+
+            Console.WriteLine($"⏱  Total time: {prettyTotal}");
+            Console.WriteLine($"⚖️  Average time per hand: {averageMsPerHand:F2} ms");
         }
 
         static void PrintCards( IEnumerable<Card> cards )

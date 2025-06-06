@@ -12,7 +12,7 @@ namespace Poker.Core.Agents
         public PlayerAction Act( ActRequest state )
         {
             // 1) Be a stupid coward
-            return new PlayerAction(PlayType.Check);
+            return new PlayerAction(PlayType.Fold);
         }
     }
 }
