@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Poker.Core.Models;
 
@@ -18,4 +19,5 @@ public class ActRequest
     public int DealerIndex { get; init; }
     public int SmallBlind { get; init; }
     public int BigBlind { get; init; }
+    public Dictionary<Guid, PlayerSummary> OtherActivePlayers { get; init; }
 }

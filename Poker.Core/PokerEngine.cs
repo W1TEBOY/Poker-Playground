@@ -242,6 +242,24 @@ namespace Poker.Core
 
         public ActRequest BuildActRequest( Player player )
         {
+            Dictionary<Guid, PlayerSummary> otherActivePlayersChips = new Dictionary<Guid, PlayerSummary>();
+
+            foreach ( int activePlayer in ActivePlayerIndices )
+            {
+                Guid activePlayerId = Players[activePlayer].Id;
+                if ( activePlayerId == player.Id )
+                {
+                    continue;
+                }
+
+                otherActivePlayersChips[activePlayerId] = new PlayerSummary
+                {
+                    Chips = Players[activePlayer].Chips,
+                    BetChips = _betsThisStreet[activePlayerId]
+                };
+            }
+
+
             return new ActRequest
             {
                 HoleCards = player.Hand.Cards,
@@ -257,7 +275,8 @@ namespace Poker.Core
                 YourSeatIndex = CurrentPlayerTurn,
                 DealerIndex = BigBlindPosition - 1 < 0 ? Players.Count - 1 : BigBlindPosition - 1,
                 SmallBlind = SmallBlind,
-                BigBlind = BigBlind
+                BigBlind = BigBlind,
+                OtherActivePlayers = otherActivePlayersChips
             };
         }
 

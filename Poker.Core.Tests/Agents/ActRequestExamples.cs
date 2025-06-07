@@ -23,7 +23,12 @@ namespace Poker.Core.Tests.Agents
                 YourSeatIndex    = 4,
                 DealerIndex      = 2,
                 SmallBlind       = 5,
-                BigBlind         = 10
+                BigBlind         = 10,
+                OtherActivePlayers = new Dictionary<Guid, PlayerSummary>
+                {
+                    { Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1"), new PlayerSummary { Chips = 1500, BetChips = 30 } },
+                    { Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2"), new PlayerSummary { Chips = 800,  BetChips = 30 } }
+                }
             }},
 
             new object[] { new ActRequest
@@ -46,7 +51,12 @@ namespace Poker.Core.Tests.Agents
                 YourSeatIndex    = 1,
                 DealerIndex      = 1,
                 SmallBlind       = 5,
-                BigBlind         = 10
+                BigBlind         = 10,
+                OtherActivePlayers = new Dictionary<Guid, PlayerSummary>
+                {
+                    { Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1"), new PlayerSummary { Chips = 300, BetChips = 0 } },
+                    { Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2"), new PlayerSummary { Chips = 450, BetChips = 0 } }
+                }
             }},
 
             new object[] { new ActRequest
@@ -69,7 +79,12 @@ namespace Poker.Core.Tests.Agents
                 YourSeatIndex    = 0,
                 DealerIndex      = 4,
                 SmallBlind       = 5,
-                BigBlind         = 10
+                BigBlind         = 10,
+                OtherActivePlayers = new Dictionary<Guid, PlayerSummary>
+                {
+                    { Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1"), new PlayerSummary { Chips = 250, BetChips = 50 } },
+                    { Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2"), new PlayerSummary { Chips = 350, BetChips = 50 } }
+                }
             }},
 
             new object[] { new ActRequest
@@ -93,7 +108,12 @@ namespace Poker.Core.Tests.Agents
                 YourSeatIndex    = 2,
                 DealerIndex      = 3,
                 SmallBlind       = 5,
-                BigBlind         = 10
+                BigBlind         = 10,
+                OtherActivePlayers = new Dictionary<Guid, PlayerSummary>
+                {
+                    { Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1"), new PlayerSummary { Chips = 1200, BetChips = 80 } },
+                    { Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2"), new PlayerSummary { Chips = 900,  BetChips = 80 } }
+                }
             }},
 
             new object[] { new ActRequest
@@ -118,7 +138,12 @@ namespace Poker.Core.Tests.Agents
                 YourSeatIndex    = 1,
                 DealerIndex      = 1,
                 SmallBlind       = 5,
-                BigBlind         = 10
+                BigBlind         = 10,
+                OtherActivePlayers = new Dictionary<Guid, PlayerSummary>
+                {
+                    { Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1"), new PlayerSummary { Chips = 1100, BetChips = 250 } },
+                    { Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2"), new PlayerSummary { Chips = 1300, BetChips = 250 } }
+                }
             }},
 
             new object[] { new ActRequest
@@ -130,7 +155,7 @@ namespace Poker.Core.Tests.Agents
                     new Card(Values.King,Suits.Diamonds),
                     new Card(Values.Queen,Suits.Diamonds)
                 },
-                CurrentStreet    = Street.Flop,
+                CurrentStreet    = Street. Flop,
                 ToCall           = 250,     // equals your stack
                 MinRaise         = 500,
                 AnyBetThisStreet = true,
@@ -141,7 +166,12 @@ namespace Poker.Core.Tests.Agents
                 YourSeatIndex    = 6,
                 DealerIndex      = 7,
                 SmallBlind       = 5,
-                BigBlind         = 10
+                BigBlind         = 10,
+                OtherActivePlayers = new Dictionary<Guid, PlayerSummary>
+                {
+                    { Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1"), new PlayerSummary { Chips =  600, BetChips = 250 } },
+                    { Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2"), new PlayerSummary { Chips =  400, BetChips = 250 } }
+                }
             }},
 
             new object[] { new ActRequest
@@ -165,7 +195,12 @@ namespace Poker.Core.Tests.Agents
                 YourSeatIndex    = 0,
                 DealerIndex      = 0,
                 SmallBlind       = 5,
-                BigBlind         = 10
+                BigBlind         = 10,
+                OtherActivePlayers = new Dictionary<Guid, PlayerSummary>
+                {
+                    { Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1"), new PlayerSummary { Chips = 975, BetChips = 0 } },
+                    { Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2"), new PlayerSummary { Chips = 1025, BetChips = 0 } }
+                }
             }},
 
             new object[] { new ActRequest
@@ -183,7 +218,12 @@ namespace Poker.Core.Tests.Agents
                 YourSeatIndex    = 8,        // BB
                 DealerIndex      = 7,
                 SmallBlind       = 5,
-                BigBlind         = 10
+                BigBlind         = 10,
+                OtherActivePlayers = new Dictionary<Guid, PlayerSummary>
+                {
+                    { Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1"), new PlayerSummary { Chips = 990, BetChips = 10 } },
+                    { Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2"), new PlayerSummary { Chips = 900, BetChips = 10 } }
+                }
             }},
 
             new object[] { new ActRequest
@@ -206,7 +246,12 @@ namespace Poker.Core.Tests.Agents
                 YourSeatIndex    = 3,
                 DealerIndex      = 0,
                 SmallBlind       = 5,
-                BigBlind         = 10
+                BigBlind         = 10,
+                OtherActivePlayers = new Dictionary<Guid, PlayerSummary>
+                {
+                    { Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1"), new PlayerSummary { Chips = 1300, BetChips = 40 } },
+                    { Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2"), new PlayerSummary { Chips = 1200, BetChips = 40 } }
+                }
             }},
 
             new object[] { new ActRequest
@@ -230,7 +275,12 @@ namespace Poker.Core.Tests.Agents
                 YourSeatIndex    = 1,
                 DealerIndex      = 2,
                 SmallBlind       = 5,
-                BigBlind         = 10
+                BigBlind         = 10,
+                OtherActivePlayers = new Dictionary<Guid, PlayerSummary>
+                {
+                    { Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1"), new PlayerSummary { Chips = 500, BetChips = 40 } },
+                    { Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2"), new PlayerSummary { Chips = 500, BetChips = 40 } }
+                }
             }}
         };
     }
