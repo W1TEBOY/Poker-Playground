@@ -26,7 +26,7 @@ namespace Poker.Core.Models
         {
             get; private set;
         }
-        private readonly IPlayerStrategy _strategy;
+        public IPlayerStrategy _strategy { get; set; }
 
         // --- Constructor with optional Guid ---
         public Player( string name, int startChips, int playerCount, int currentPosition, IPlayerStrategy strategy, Guid? id = null )
