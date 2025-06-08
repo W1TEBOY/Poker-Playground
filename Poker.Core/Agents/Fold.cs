@@ -3,7 +3,7 @@ using Poker.Core.Models;
 
 namespace Poker.Core.Agents
 {
-    public class FoldAgent : IPlayerStrategy
+    public class Fold : IPlayerStrategy
     {
         /// <summary>
         /// The stupid coward's strategy:

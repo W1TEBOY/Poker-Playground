@@ -3,7 +3,7 @@ using Poker.Core.Models;
 
 namespace Poker.Core.Agents
 {
-    public class CheckOrCallAgent : IPlayerStrategy
+    public class CheckOrCall : IPlayerStrategy
     {
         public PlayerAction Act( ActRequest state )
         {

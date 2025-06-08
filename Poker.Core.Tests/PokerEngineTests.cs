@@ -104,7 +104,7 @@ namespace Poker.Core.Tests
             int startChips = 100;
             int playerCount = 3;
 
-            var checkOnlyStrategy = new CheckOrCallAgent();
+            var checkOnlyStrategy = new CheckOrCall();
             var players = new List<Player>();
             for ( int i = 0; i < playerCount; i++ )
             {
@@ -141,7 +141,7 @@ namespace Poker.Core.Tests
             var engine = new PokerEngine();
             int playerCount = 3;
 
-            var foldStrategy = new FoldAgent();
+            var foldStrategy = new Fold();
 
             var p1 = new Player("P1_SB", 1000, playerCount, 0, foldStrategy); // Seat 0
             var p2 = new Player("P2_BB", 1000, playerCount, 1, foldStrategy); // Seat 1

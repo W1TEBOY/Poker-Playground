@@ -3,7 +3,7 @@ using Poker.Core.Models;
 
 namespace Poker.Core.Agents
 {
-    public class NaiveAgent : IPlayerStrategy
+    public class Naive : IPlayerStrategy
     {
         /// <summary>
         /// A very naive strategy:

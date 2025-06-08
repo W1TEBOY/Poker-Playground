@@ -3,7 +3,7 @@ using Poker.Core.Models;
 
 namespace Poker.Core.Agents
 {
-    public class AllInAgent : IPlayerStrategy
+    public class AllIn : IPlayerStrategy
     {
         /// <summary>
         /// The GIGA CHAD's strategy:

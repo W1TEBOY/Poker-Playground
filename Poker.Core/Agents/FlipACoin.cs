@@ -4,7 +4,7 @@ using System;
 
 namespace Poker.Core.Agents
 {
-    public class FlipACoinAgent : IPlayerStrategy
+    public class FlipACoin : IPlayerStrategy
     {
         private static readonly Random _rng = new();
 

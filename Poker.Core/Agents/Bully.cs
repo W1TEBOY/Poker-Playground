@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Poker.Core.Agents
 {
-    public class BullyAgent : IPlayerStrategy
+    public class Bully : IPlayerStrategy
     {
         /// <summary>
         /// The BULLY's strategy:
