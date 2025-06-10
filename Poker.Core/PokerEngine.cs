@@ -270,7 +270,7 @@ namespace Poker.Core
                 CommunityCards = CommunityCards.Cards,
                 CurrentStreet = _round,
                 ToCall = CurrentMinBet - _betsThisHand[CurrentPlayerId],
-                MinRaise = _lastRaiseAmount,
+                MinRaise = _lastRaiseAmount + CurrentMinBet - _betsThisHand[CurrentPlayerId],
                 AnyBetThisStreet = _anyBetThisStreet,
                 PotSize = CurrentPot,
                 YourCurrentBet = _betsThisHand[CurrentPlayerId],
@@ -523,11 +523,14 @@ namespace Poker.Core
             else if ( street == Street.River )
                 River();
 
-            // 2) Reset betting state (even preflop, we’ll handle preflop flag below)
+            // 2) Reset betting state
             _anyBetThisStreet = false;
             _lastRaiseAmount = BigBlind;
-            foreach ( var pid in _betsThisStreet.Keys.ToList() )
-                _betsThisStreet[pid] = 0;
+            if ( street != Street.Preflop )
+            {
+                foreach ( var pid in _betsThisStreet.Keys.ToList() )
+                    _betsThisStreet[pid] = 0;
+            }
 
             // 3) Pick first to act
             if ( street == Street.Preflop )
@@ -573,6 +576,8 @@ namespace Poker.Core
             var lastActions = new Queue<PlayType>();
 
             // 7) Main loop
+            int iterationSafeguard = 0;
+            const int iterationLimit = 1000;
             while ( _round == street && ActivePlayerIndices.Count > 1 && !_EveryoneAllIn() )
             {
                 var player = Players[CurrentPlayerTurn];
@@ -608,12 +613,12 @@ namespace Poker.Core
                     break;
                 }
 
-                // Advance to next active seat
-                do
+                if ( ++iterationSafeguard > iterationLimit )
                 {
-                    CurrentPlayerTurn = (CurrentPlayerTurn + 1) % Players.Count;
+                    // Break out to avoid a potential infinite loop
+                    _round = street + 1;
+                    break;
                 }
-                while ( !ActivePlayerIndices.Contains(CurrentPlayerTurn) );
             }
 
             // 8) Final safety: if we never advanced street naturally, force it
@@ -652,15 +657,31 @@ namespace Poker.Core
                 int levelSize = levelBet - prevLevel;
                 if ( levelSize > 0 )
                 {
-                    // everyone whose total bet ≥ this level participates
+                    int potAmount = levelSize * contributions.Count(x => x.Bet >= levelBet);
+
                     var eligible = contributions
                         .Where(x => x.Bet >= levelBet && x.Eligible)
                         .Select(x => x.Player)
                         .ToList();
 
-                    int potAmount = levelSize * contributions.Count(x => x.Bet >= levelBet);
-                    sidePots.Add((potAmount, eligible));
-                    prevLevel = levelBet;
+                    if ( eligible.Count == 0 )
+                    {
+                        if ( sidePots.Count > 0 )
+                        {
+                            var last = sidePots[^1];
+                            sidePots[^1] = (last.Amount + potAmount, last.Eligible);
+                        }
+                        else
+                        {
+                            // Shouldn't happen, but keep the pot to avoid losing chips
+                            sidePots.Add((potAmount, eligible));
+                        }
+                    }
+                    else
+                    {
+                        sidePots.Add((potAmount, eligible));
+                        prevLevel = levelBet;
+                    }
                 }
             }
 
