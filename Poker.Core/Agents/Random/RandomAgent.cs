@@ -27,8 +27,7 @@ namespace Poker.Core.Agents
                 if ( state.YourStack >= state.ToCall )
                     legal.Add(PlayType.Call);
 
-                if ( state.YourStack >= state.ToCall + state.MinRaise
-                    && state.MinRaise > 0 )
+                if ( state.YourStack >= state.ToCall + state.MinRaise && state.MinRaise > 0 )
                     legal.Add(PlayType.Raise);
             }
 
@@ -50,9 +49,12 @@ namespace Poker.Core.Agents
 
                 case PlayType.Raise:
                     {
-                        int minTotal = state.ToCall + state.MinRaise; // rule-compliant
-                        int maxTotal = state.YourStack;               // can’t bet more
-                        int totalBet = _rng.Next(minTotal, maxTotal + 1); // inclusive upper
+                        // Calculate the maximum extra chips that can be added after calling.
+                        int maxRaise = state.YourStack - state.ToCall;
+                        // Choose a raise increment that is at least the minimum allowed.
+                        int raiseIncrement = _rng.Next(state.MinRaise, maxRaise + 1);
+                        // Total bet is the amount to call plus the raise increment.
+                        int totalBet = state.ToCall + raiseIncrement;
                         return new PlayerAction(PlayType.Raise, totalBet);
                     }
 

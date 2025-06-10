@@ -26,12 +26,8 @@ namespace Poker.Core.Tests.Agents
 
             public static IEnumerable<object[]> Cases( )
             {
-                foreach ( object[] reqObj in ActRequestFixtures.GetTenCases() )
-                {
-                    var req = (ActRequest) reqObj[0];
-                    foreach ( var agentType in AgentTypes )
-                        yield return new object[] { agentType, req };
-                }
+                foreach ( var agentType in AgentTypes )
+                    yield return new object[] { agentType };
             }
         }
 
@@ -154,7 +150,7 @@ namespace Poker.Core.Tests.Agents
                 }
 
                 var totalChips = engine.Players.Sum(p => p.Chips);
-                totalChips.Should().Be(6000);
+                totalChips.Should().Be(6000, $"Agent Type: {agentType}");
             });
         }
 
